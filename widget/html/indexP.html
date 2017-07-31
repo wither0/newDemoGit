@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/indexP.css"/>
+</head>
+<body>
+<!-----------------------------------------------顶部目录--------------------------------------------------->
+	<div id="mainP">
+		<div id="head" class="head glbcolor">
+			<div class="search">
+				<input type="text" v-model="searchinfo" placeholder="请输入搜索内容" class="searchA"/>
+				<input type="button" v-on:click="searchact(searchinfo)" class="searchB"/>
+			</div>
+			<ul class="Mmanu">
+				<li class="Mlist" v-for="mmanu in mainmanu">
+					<span v-on:click="liston(mmanu)">{{mmanu.title}}</span>
+					<ul class="Smanu">
+						<li class="Slist glbcolor" v-for="mdata in mmanu.data" v-show="mmanu.isact" v-on:click="chanpage(mdata.value)">
+							{{mdata.title}}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+<!-----------------------------------------------用户信息------------------------------------------------>
+		<div id="uinfo" class="uinfo glbcolor">
+			<div v-show="!islogin" id="rigwin">
+				<img class="sublogo" v-bind:src="userhead"/>
+				<input type="text" v-model="logid" class="logA" placeholder="请输入您的账号"/>
+				<input type="text" v-model="logpws" class="logA" placeholder="请输入您的密码"/>
+				<input type="button" class="sbtn glbcolor" v-on:click="logact" value="登录"/>
+				<input type="button" class="sbtn glbcolor" v-on:click="rigishow" value="注册"/>
+			</div>
+			<div v-show="islogin" id="uinfowin">
+				<img class="head90" v-bind:src="userhead"/>
+				<div class="userI">
+					<ul class="userIN">
+						<li class="userinfoI" v-for="uin in uinfo">{{uin.title+""+uin.value}}</li>
+					</ul>
+				</div>
+				<div class="userstat">
+					<ul class="userST">
+						<div class="userinfoLI">{{uinfoS.title}}</div>
+						<img class="userinfoIMG" v-bind:src="uimg.imgsrc" v-for="uimg in uinfoS.value"/>
+						<div class="userinfoLI2">签名:{{uinfoS.signinfo}}</div>
+					</ul>
+				</div>
+			</div>
+		</div>
+<!-------------------------------------------交流列表-------------------------------------------------->
+		<div class="commumenu" style="display:none">
+			<ul class="comulist">
+				<li v-for=""></li>
+			</ul>
+			<div class="flist">
+			</div>
+			<div class="comu" style="display: none">
+				<div>
+
+				</div>
+				<div>
+					<input type="text" class="textinfo" id="textinfo"/>
+					<input type="button" v-on:click="voicestart" class="voinfo" id="voinfo" value="对话"/>
+					<form id="filedata">
+						<!--<input type="file" class="fileinfo" id="fileinfo"/>-->
+						<input type="file" accept="audio/*;capture=microphone" id="fileinfo">
+					</form>
+				</div>
+			</div>
+		</div>
+<!-------------------------------------------主界面--------------------------------------------------->
+		<div id="mainA" class="mainA" v-if="pagetype=='main'">
+			<div class="hotarea">
+				<ul class="hotA">
+					<li class="hotinfo" v-for="hotI in hotinfo" v-on:click="todetail()">
+						<img class="hotimg" v-bind:src="hotI.value"/>
+					</li>
+				</ul>
+			</div>
+			<a class="adv"></a>
+			<div class="subtitle">萌图</div>
+			<ul class="subA">
+				<li class="detailinfo" v-for="picI in picinfo" v-on:click="todetail()">
+					<img class="hotimg" v-bind:src="picI.value"/>
+				</li>
+			</ul>
+			<a class="adv"></a>
+			<div class="subtitle">萌文</div>
+			<ul class="subA">
+				<li class="detailinfo" v-for="novI in novinfo" v-on:click="todetail()">
+					<img class="hotimg" v-bind:src="novI.value"/>
+				</li>
+			</ul>
+			<a class="adv"></a>
+			<div class="subtitle">萌音</div>
+			<ul class="subA">
+				<li class="detailinfo" v-for="musicI in musicinfo" v-on:click="todetail()">
+					<img class="hotimg" v-bind:src="musicI.value"/>
+				</li>
+			</ul>
+			<a class="adv"></a>
+			<div class="subtitle">萌游</div>
+			<ul class="subA">
+				<li class="detailinfo" v-for="gameI in gameinfo" v-on:click="todetail()">
+					<img class="hotimg" v-bind:src="gameI.value"/>
+				</li>
+			</ul>
+		</div>
+<!----------------------------------用户信息---------------------------------------->
+		<div id="mainU" class="mainA" v-if="pagetype=='user'||pagetype=='frds'">
+			<img id="uhead" v-bind:src="userhead"/>
+			<div v-if="pagetype=='frds'&&isfrds==false" class="addfrd glbcolor">+</div>
+			<div class="blankP">
+				<h1 id="uname">{{uinfo[0].value}}
+						<span>lv<b>{{uinfo[1].value}}</b></span>
+				</h1>
+				<ul class="moebank">
+					<li>{{uinfo[2].value}}</li>
+					<li>{{uinfo[3].value}}</li>
+				</ul>
+				<h2 class="paneltitle">{{uinfoS.signinfo}}</h2>
+				<div v-if="pagetype=='user'" class="subtitle">我的作品</div>
+				<div v-if="pagetype=='frds'" class="subtitle">他的作品</div>
+				<ul class="myart">
+					<li class="detailinfo" v-for="myzpL in myzplist" v-on:click="todetail()">
+						<img class="hotimg" v-bind:src="myzpL.value"/>
+					</li>
+				</ul>
+				<div v-if="pagetype=='user'" class="subtitle">萌友作品</div>
+				<ul v-if="pagetype=='user'" class="myart">
+					<li class="detailinfo" v-for="myfavL in myfavlist" v-on:click="todetail()">
+						<img class="hotimg" v-bind:src="myfavL.value"/>
+					</li>
+				</ul>
+				<div v-if="pagetype=='user'" class="subtitle">我的收藏</div>
+				<div v-if="pagetype=='frds'" class="subtitle">他的收藏</div>
+				<ul class="myart">
+					<li class="detailinfo" v-for="mysavel in mysavelist" v-on:click="todetail()">
+						<img class="hotimg" v-bind:src="mysavel.value"/>
+					</li>
+				</ul>
+			</div>
+		</div>
+<!-------------------------------------------------作品列表---------------------------------------->
+		<div v-if="pagetype=='fileL'" class="mainA">
+			<div class="submenuA glbcolor">
+				<div class="submenu">
+					<span v-on:click="orderch()">排序:{{ordermode}}</span>
+					<ul class="Smanu glbcolor" v-show="subactive">
+						<li v-on:click="chorder(0)" class="Slist glbcolor">按时间</li>
+						<li v-on:click="chorder(1)" class="Slist glbcolor">按热度</li>
+						<li v-on:click="chorder(2)" class="Slist glbcolor">按萌币</li>
+						<li v-on:click="chorder(3)" class="Slist glbcolor">按评论数</li>
+					</ul>
+				</div>
+			</div>
+			<div class="maininfoA">
+				<ul>
+					<li class="maininfoL" v-for="infoml in infomnlist" v-on:click="todetail()">
+							<img class="infoimg" v-bind:src="infoml.img"/>
+							<div class="infoLif">
+								<span class="infoTT intitle">{{infoml.name}}</span>
+								<span class="infoTT inauthor">{{infoml.author}}</span>
+								<span class="infoTB inconnumb">{{infoml.reconnumb}}</span>
+								<span class="infoTB inlike">{{infoml.like}}</span>
+								<span class="infoTB time">{{infoml.time}}</span>
+							</div>
+					</li>
+					<li v-show="ismore" v-on:click="getmore(pagetype)" class="mainfoend">
+						更多...
+					</li>
+				</ul>
+			</div>
+		</div>
+<!-------------------------------------------详情---------------------------------------------->
+		<div v-if="pagetype=='filedet'" class="mainA">
+			<div class="blankP">
+				<h1 class="titleT">{{Dfiles.title}}</h1>
+				<span class="subinfo titdiv">{{Dfiles.time}}</span>
+				<div id="mainfile" class="mainfile">
+					<img v-bind:id="'mainimg'+index" v-show="Dfiles.filetype == 'image'" v-bind:src="imgdata" v-for="(imgdata,index) in Dfiles.data"/>
+				</div>
+				<a class="adv"></a>
+				<div class="authorinfo">
+					<img class="targhead" v-bind:src="Dfiles.authead"/>
+					<div class="ainfoA">
+						<h2>{{Dfiles.author}}</h2>
+						<span class="subinfo">{{Dfiles.dz}}</span>
+					</div>
+				</div>
+				<a class="adv"></a>
+				<div class="reqs">
+					<div class="subtitle">评论</div>
+					<ul class="reqlists">
+						<li v-for="reqdata in Dfiles.rep">
+							<div class="reqtitle">
+								<img class="reqhead" v-bind:src="reqdata.rehead"/>
+								<span class="subreqinfo">{{reqdata.rename}}</span>
+							</div>
+							<div class="reqinfo">
+								<span class="subreqinfoM">{{reqdata.reinfo}}</span>
+								<div class="reqpeoinfo">
+									<span class="subreqinfo">{{reqdata.usemoeBeen}}</span>
+									<span class="subreqinfo">{{reqdata.usemoeB}}</span>
+									<span class="subreqinfo subretime">{{reqdata.retime}}</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<textarea class="sendrep" v-model="reqinfo">{{reqinfo}}</textarea>
+					<!-- <div class="conpan">
+						<input type="button" class="sendbtn glbcolor" value="发送"/>
+						<input type="button" class="sendbtn glbcolor"/>
+					</div> -->
+				</div>
+			</div>
+		</div>
+<!------------------------------------------未开放--------------------------------------------------->
+		<div v-if="pagetype=='working'" class="mainA">
+			<div class="subtitle">施工中>_<</div>
+		</div>
+<!-------------------------------------------底部工具----------------------------------------------->
+		<div class="botcon glbcolor">
+			<ul class="botconA">
+				<li class="botconB" v-on:click="sendfile">发布</li>
+				<li class="botconB">通知</li>
+				<li class="botconB">动态</li>
+			</ul>
+			<form id="myfileF" style="display:none">
+				<input id="myfile" type="file"/>
+			</form>
+		</div>
+	<!-----------------------------------------注册页面------------------------------------------------>
+		<div v-show="isrigi" class="floatwin">
+			<div class="rigwin">
+				<input type="text" class="logA glbcolorB" maxlength="24" v-model="rigid" placeholder="请输入您的账号"/>
+				<input type="password" class="logA glbcolorB" maxlength="36" v-model="rigpws" placeholder="请输入您的密码"/>
+				<input type="password" class="logA glbcolorB" maxlength="36" v-model="rigrepws" placeholder="请输入重复您的密码"/>
+				<input type="text" class="logA glbcolorB short"maxlength="8" v-model="rigid" placeholder="请输入您的验证码"/>
+				<input type="button" class="sbtn glbcolor linebtn" v-on:click="sendnumb" value="发送验证码"/>
+				<input type="button" class="sbtn glbcolor" v-on:click="rigiact" value="注册"/>
+				<input type="button" class="sbtn glbcolor" v-on:click="rigihide" value="取消"/>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/indexP/indexP.js"></script>
+<script type="text/javascript" src="../script/filelist/filelist.js"></script>
+</html>
